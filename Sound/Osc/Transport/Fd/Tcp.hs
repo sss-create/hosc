@@ -12,6 +12,7 @@ import qualified Sound.Osc.Coding.Decode.Binary as Decode.Binary {- hosc -}
 import qualified Sound.Osc.Coding.Encode.Builder as Encode.Builder {- hosc -}
 import qualified Sound.Osc.Packet as Packet {- hosc -}
 import qualified Sound.Osc.Transport.Fd as Fd {- hosc -}
+import Sound.Osc.Transport.Fd (Transport(recvPacketOrFail))
 
 -- | The Tcp transport handle data type.
 newtype Tcp = Tcp {tcpHandle :: Io.Handle}
@@ -34,6 +35,12 @@ tcp_recv_packet (Tcp fd) = do
   b1 <- ByteString.Lazy.hGet fd (Convert.word32_to_int (Byte.decode_word32 b0))
   return (Decode.Binary.decodePacket b1)
 
+tcp_recv_packet_or_fail :: Tcp -> IO (Either ByteString.Lazy.ByteString Packet.Packet)
+tcp_recv_packet_or_fail (Tcp fd) = do
+  b0 <- ByteString.Lazy.hGet fd 4
+  b1 <- ByteString.Lazy.hGet fd (Convert.word32_to_int (Byte.decode_word32 b0))
+  return (Decode.Binary.eitherDecodePacket b1)
+
 -- | Close Tcp.
 tcp_close :: Tcp -> IO ()
 tcp_close = Io.hClose . tcpHandle
@@ -42,6 +49,7 @@ tcp_close = Io.hClose . tcpHandle
 instance Fd.Transport Tcp where
   sendPacket = tcp_send_packet
   recvPacket = tcp_recv_packet
+  recvPacketOrFail = tcp_recv_packet_or_fail
   close = tcp_close
 
 -- | Bracket Tcp communication.

@@ -15,7 +15,12 @@ import Data.Maybe {- base -}
 
 import Sound.Osc.Coding.Byte {- hosc -}
 import Sound.Osc.Coding.Convert {- hosc -}
-import Sound.Osc.Datum {- hosc -}
+import Sound.Osc.Datum
+    ( Datum(TimeStamp, Int32, Int64, Float, Double, Blob, AsciiString),
+      Ascii,
+      DatumType,
+      midi,
+      descriptor_tags ) {- hosc -}
 import Sound.Osc.Packet {- hosc -}
 import Sound.Osc.Time {- hosc -}
 

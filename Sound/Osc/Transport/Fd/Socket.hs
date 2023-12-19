@@ -4,6 +4,7 @@ module Sound.Osc.Transport.Fd.Socket where
 import qualified Sound.Osc.Transport.Fd as Fd {- hosc -}
 import qualified Sound.Osc.Transport.Fd.Tcp as Fd.Tcp {- hosc -}
 import qualified Sound.Osc.Transport.Fd.Udp as Fd.Udp {- hosc -}
+import Sound.Osc.Transport.Fd (Transport(recvPacketOrFail))
 
 -- | Protocol, either Udp or Tcp
 data OscProtocol = Udp | Tcp
@@ -34,5 +35,7 @@ instance Fd.Transport OscSocket where
   sendPacket (OscUdpSocket fd) = Fd.Udp.udp_send_packet fd
   recvPacket (OscTcpSocket fd) = Fd.Tcp.tcp_recv_packet fd
   recvPacket (OscUdpSocket fd) = Fd.Udp.udp_recv_packet fd
+  recvPacketOrFail (OscTcpSocket fd) = Fd.Tcp.tcp_recv_packet_or_fail fd
+  recvPacketOrFail (OscUdpSocket fd) = Fd.Udp.udp_recv_packet_or_fail fd
   close (OscTcpSocket fd) = Fd.Tcp.tcp_close fd
   close (OscUdpSocket fd) = Fd.Udp.udp_close fd

@@ -8,6 +8,7 @@ import Data.Maybe {- base -}
 import Sound.Osc.Datum {- hosc -}
 import Sound.Osc.Packet {- hosc -}
 import qualified Sound.Osc.Wait as Wait {- hosc -}
+import qualified Data.ByteString.Lazy as ByteString.Lazy
 
 -- | Abstract over the underlying transport protocol.
 class Transport t where
@@ -16,6 +17,7 @@ class Transport t where
 
   -- | Receive and decode an Osc packet.
   recvPacket :: t -> IO (PacketOf Message)
+  recvPacketOrFail :: t -> IO (Either ByteString.Lazy.ByteString Packet)
 
   -- | Close an existing connection.
   close :: t -> IO ()
